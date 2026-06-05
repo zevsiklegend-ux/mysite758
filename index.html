@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>INFECT // PHOTO VAULT</title>
+    <title>INFECT // LOG — личный блог</title>
     <style>
         * {
             margin: 0;
@@ -17,13 +17,13 @@
             color: #e0e0e0;
         }
         .container {
-            max-width: 1400px;
+            max-width: 800px;
             margin: 0 auto;
         }
         .header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: baseline;
             flex-wrap: wrap;
             margin-bottom: 2rem;
             border-bottom: 2px solid #1f2340;
@@ -37,73 +37,122 @@
             background-clip: text;
             color: transparent;
         }
-        .upload-area {
-            background: #111522;
-            border: 2px dashed #2e3450;
+        .new-post-btn {
+            background: #00ffc6;
+            color: #0b0d17;
+            border: none;
+            padding: 0.5rem 1.2rem;
             border-radius: 2rem;
-            padding: 2rem;
-            text-align: center;
-            margin-bottom: 2rem;
+            font-weight: bold;
             cursor: pointer;
             transition: 0.2s;
         }
-        .upload-area:hover {
-            border-color: #00ffc6;
-            background: #161c2c;
+        .new-post-btn:hover {
+            background: #00cc9f;
+            transform: scale(1.02);
         }
-        .upload-icon {
-            font-size: 3rem;
+        /* форма добавления поста */
+        .post-form {
+            background: #111522;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #2e3450;
+            display: none;
         }
-        .gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        .post-form textarea {
+            width: 100%;
+            background: #1e2438;
+            border: 1px solid #2f3a5a;
+            color: #e0e0e0;
+            padding: 0.8rem;
+            border-radius: 1rem;
+            font-family: inherit;
+            resize: vertical;
+            margin-bottom: 1rem;
+        }
+        .photo-zone {
+            background: #1a2038;
+            border: 2px dashed #3a405e;
+            border-radius: 1rem;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 1rem;
+        }
+        .photo-preview {
+            max-width: 100%;
+            max-height: 200px;
+            margin-top: 0.5rem;
+            border-radius: 0.8rem;
+        }
+        .form-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+        .form-buttons button {
+            padding: 0.5rem 1.2rem;
+            border-radius: 2rem;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .submit-btn {
+            background: #00ffc6;
+            color: #0b0d17;
+        }
+        .cancel-btn {
+            background: #2a2e44;
+            color: #e0e0e0;
+        }
+        /* лента постов */
+        .feed {
+            display: flex;
+            flex-direction: column;
             gap: 1.5rem;
         }
-        .photo-card {
+        .post {
             background: #11141f;
             border-radius: 1.2rem;
-            overflow: hidden;
             border: 1px solid #262d44;
+            padding: 1.2rem;
             transition: 0.2s;
-            position: relative;
         }
-        .photo-card:hover {
-            transform: translateY(-5px);
+        .post:hover {
             border-color: #00ffc6;
-            box-shadow: 0 10px 20px rgba(0,255,198,0.1);
         }
-        .photo-img {
-            width: 100%;
-            aspect-ratio: 1 / 1;
-            object-fit: cover;
-            display: block;
-            background: #07090f;
-        }
-        .photo-info {
-            padding: 0.8rem;
-            font-size: 0.8rem;
+        .post-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 0.8rem;
+            font-size: 0.8rem;
+            color: #7a80a0;
         }
-        .photo-name {
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            max-width: 150px;
+        .post-date {
+            font-family: monospace;
         }
-        .delete-btn {
+        .delete-post {
             background: #ff3366;
             border: none;
             color: white;
-            padding: 0.2rem 0.6rem;
+[06.06.2026 1:35] Delovi: padding: 0.2rem 0.6rem;
             border-radius: 20px;
             cursor: pointer;
             font-size: 0.7rem;
-            transition: 0.2s;
         }
-        .delete-btn:hover {
-            background: #ff5c7e;
+        .post-text {
+            font-size: 1rem;
+            line-height: 1.4;
+            margin-bottom: 1rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .post-image {
+            max-width: 100%;
+            border-radius: 1rem;
+            margin-top: 0.5rem;
         }
         .empty-msg {
             text-align: center;
@@ -112,141 +161,112 @@
             border-radius: 2rem;
             color: #5a6080;
         }
-        .controls {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-        }
-        .clear-all {
-            background: #1e1a2e;
-            border: 1px solid #ff6680;
-            color: #ff99bb;
-            padding: 0.4rem 1rem;
-            border-radius: 2rem;
-            cursor: pointer;
-        }
-        .clear-all:hover {
-            background: #ff3366;
-            color: #0b0d17;
-        }
         footer {
             text-align: center;
             margin-top: 2rem;
             color: #4a5070;
             font-size: 0.7rem;
         }
-[06.06.2026 1:12] Delovi: input[type="file"] {
-            display: none;
-        }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="header">
-        <div class="logo">INFECT // PHOTO VAULT</div>
-        <h2>Касыч приветульки тебе</h2>
-        <div class="controls">
-            <button class="clear-all" id="clearAllBtn">🧹 ОЧИСТИТЬ ВСЁ</button>
+        <div class="logo">INFECT // LOG</div>
+        <button class="new-post-btn" id="newPostBtn">➕ НОВЫЙ ПОСТ</button>
+    </div>
+
+    <!-- Форма добавления поста -->
+    <div class="post-form" id="postForm">
+        <textarea id="postText" rows="4" placeholder="Текст записи..."></textarea>
+        <div class="photo-zone" id="photoZone">
+            📷 Нажми или перетащи фото сюда (необязательно)
+            <input type="file" id="imageInput" accept="image/*" style="display: none;">
+        </div>
+        <div id="imagePreview"></div>
+        <div class="form-buttons">
+            <button class="cancel-btn" id="cancelBtn">ОТМЕНА</button>
+            <button class="submit-btn" id="submitBtn">ОПУБЛИКОВАТЬ</button>
         </div>
     </div>
 
- 
-    <div class="gallery" id="gallery"></div>
-    <footer>ВСЕ ФОТО ХРАНЯТСЯ В БРАУЗЕРЕ. НИКАКИХ СЕРВЕРОВ.</footer>
+    <!-- Лента постов -->
+    <div class="feed" id="feed"></div>
+    <footer>ВСЕ ПОСТЫ ХРАНЯТСЯ В ТВОЁМ БРАУЗЕРЕ. НИКТО ИХ НЕ УВИДИТ, КРОМЕ ТЕБЯ.</footer>
 </div>
 
 <script>
-    let photos = [];
+    // ----- Структура поста -----
+    let posts = []; // каждый пост: { id, text, imageBase64, date }
 
-    function loadPhotos() {
-        const stored = localStorage.getItem("infect_photos");
-        if (stored) photos = JSON.parse(stored);
-        else photos = [];
-        renderGallery();
+    // Загрузка из localStorage
+    function loadPosts() {
+        const stored = localStorage.getItem("infect_blog_posts");
+        if (stored) {
+            posts = JSON.parse(stored);
+        } else {
+            posts = [];
+        }
+        renderFeed();
     }
 
-    function savePhotos() {
-        localStorage.setItem("infect_photos", JSON.stringify(photos));
+    function savePosts() {
+        localStorage.setItem("infect_blog_posts", JSON.stringify(posts));
     }
 
-    function addPhoto(file) {
-        return new Promise((resolve, reject) => {
-            if (!file.type.startsWith('image/')) reject("Не изображение");
-            if (file.size > 10 * 1024 * 1024) reject("Файл больше 10 МБ");
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const newPhoto = {
-                    id: Date.now() + Math.random() * 10000,
-                    name: file.name,
-                    data64: e.target.result,
-                    date: new Date().toISOString()
-                };
-                photos.unshift(newPhoto);
-                savePhotos();
-                renderGallery();
-                resolve();
-            };
-            reader.onerror = () => reject("Ошибка чтения");
-            reader.readAsDataURL(file);
-        });
+    // Добавление нового поста
+    function addPost(text, imageBase64) {
+        if (!text.trim() && !imageBase64) {
+            alert("Добавь хотя бы текст или фото");
+            return false;
+        }
+        const newPost = {
+            id: Date.now(),
+            text: text.trim() || "",
+            imageBase64: imageBase64 || null,
+            date: new Date().toLocaleString()
+        };
+        posts.unshift(newPost); // новые сверху
+        savePosts();
+        renderFeed();
+        return true;
     }
 
-    function deletePhoto(id) {
-        photos = photos.filter(p => p.id !== id);
-        savePhotos();
-        renderGallery();
-        showToast("Фото удалено");
-    }
-
-    function clearAll() {
-        if (confirm("Удалить ВСЕ фотографии?")) {
-            photos = [];
-            savePhotos();
-            renderGallery();
-            showToast("Галерея очищена");
+    // Удаление поста
+    function deletePost(id) {
+        if (confirm("Удалить этот пост?")) {
+            posts = posts.filter(p => p.id !== id);
+            savePosts();
+            renderFeed();
         }
     }
 
-    function renderGallery() {
-        const gallery = document.getElementById("gallery");
-        if (!photos.length) {
-            gallery.innerHTML = <div class="empty-msg">📭 НЕТ ФОТОГРАФИЙ. ЗАГРУЗИ ПЕРВОЕ.</div>;
+    function renderFeed() {
+        const feed = document.getElementById("feed");
+        if (!posts.length) {
+            feed.innerHTML = <div class="empty-msg">📭 ПУСТО. НАЖМИ «НОВЫЙ ПОСТ».</div>;
             return;
         }
-        gallery.innerHTML = photos.map(photo => 
-            <div class="photo-card">
-                <img class="photo-img" src="${photo.data64}" alt="${escapeHtml(photo.name)}" loading="lazy">
-                <div class="photo-info">
-                    <span class="photo-name" title="${escapeHtml(photo.name)}">${escapeHtml(photo.name.length > 20 ? photo.name.slice(0, 17)+'...' : photo.name)}</span>
-                    <button class="delete-btn" data-id="${photo.id}">✖</button>
+        feed.innerHTML = posts.map(post => 
+            <div class="post">
+                <div class="post-header">
+                    <span class="post-date">${escapeHtml(post.date)}</span>
+                    <button class="delete-post" data-id="${post.id}">✖ УДАЛИТЬ</button>
                 </div>
+                <div class="post-text">${escapeHtml(post.text).replace(/\n/g, '<br>')}</div>
+                ${post.imageBase64 ? <img class="post-image" src="${post.imageBase64}" alt="Фото"> : ''}
             </div>
         ).join("");
-        document.querySelectorAll(".delete-btn").forEach(btn => {
+        // навесить удаление
+        document.querySelectorAll(".delete-post").forEach(btn => {
             btn.addEventListener("click", (e) => {
-                const id = parseFloat(btn.dataset.id);
-                deletePhoto(id);
+                const id = parseInt(btn.dataset.id);
+                deletePost(id);
             });
         });
     }
-
-    function showToast(msg) {
-        const toast = document.createElement("div");
-        toast.innerText = msg;
-        toast.style.position = "fixed";
-        toast.style.bottom = "20px";
-        toast.style.right = "20px";
-        toast.style.background = "#00ffc6";
-        toast.style.color = "#0b0d17";
-        toast.style.padding = "8px 18px";
-        toast.style.borderRadius = "30px";
-        toast.style.fontWeight = "bold";
-        toast.style.zIndex = "9999";
-        document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 2000);
-    }
-[06.06.2026 1:12] Delovi: function escapeHtml(str) {
+[06.06.2026 1:35] Delovi: function escapeHtml(str) {
+        if (!str) return '';
         return str.replace(/[&<>]/g, function(m) {
             if (m === '&') return '&amp;';
             if (m === '<') return '&lt;';
@@ -255,46 +275,89 @@
         });
     }
 
-    const uploadArea = document.getElementById("uploadArea");
-    const fileInput = document.getElementById("fileInput");
-    uploadArea.addEventListener("click", () => fileInput.click());
-    fileInput.addEventListener("change", async (e) => {
-        const files = Array.from(e.target.files);
-        for (const file of files) {
-            try {
-                await addPhoto(file);
-                showToast(✓ ${file.name} загружено);
-            } catch (err) {
-                showToast(Ошибка: ${err});
-            }
+    // ---------- Логика формы ----------
+    const form = document.getElementById("postForm");
+    const textarea = document.getElementById("postText");
+    const imageInput = document.getElementById("imageInput");
+    const photoZone = document.getElementById("photoZone");
+    const imagePreviewDiv = document.getElementById("imagePreview");
+    let currentImageBase64 = null;
+
+    document.getElementById("newPostBtn").onclick = () => {
+        form.style.display = "block";
+        textarea.value = "";
+        currentImageBase64 = null;
+        imagePreviewDiv.innerHTML = "";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+    document.getElementById("cancelBtn").onclick = () => {
+        form.style.display = "none";
+        currentImageBase64 = null;
+        imagePreviewDiv.innerHTML = "";
+    };
+
+    // клик на фото-зону
+    photoZone.onclick = () => imageInput.click();
+    imageInput.onchange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        if (!file.type.startsWith('image/')) {
+            alert("Только изображения");
+            return;
         }
-        fileInput.value = "";
-    });
-    uploadArea.addEventListener("dragover", (e) => {
+        if (file.size > 10 * 1024 * 1024) {
+            alert("Файл больше 10 МБ");
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            currentImageBase64 = ev.target.result;
+            imagePreviewDiv.innerHTML = <img src="${currentImageBase64}" class="photo-preview" style="max-width:100%; max-height:150px; border-radius:12px;">;
+        };
+        reader.readAsDataURL(file);
+    };
+    // drag & drop на фото-зону
+    photoZone.addEventListener("dragover", (e) => {
         e.preventDefault();
-        uploadArea.style.borderColor = "#00ffc6";
-        uploadArea.style.background = "#1a2038";
+        photoZone.style.borderColor = "#00ffc6";
     });
-    uploadArea.addEventListener("dragleave", () => {
-        uploadArea.style.borderColor = "#2e3450";
-        uploadArea.style.background = "#111522";
+    photoZone.addEventListener("dragleave", () => {
+        photoZone.style.borderColor = "#3a405e";
     });
-    uploadArea.addEventListener("drop", async (e) => {
+    photoZone.addEventListener("drop", (e) => {
         e.preventDefault();
-        uploadArea.style.borderColor = "#2e3450";
-        uploadArea.style.background = "#111522";
-        const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
-        for (const file of files) {
-            try {
-                await addPhoto(file);
-                showToast(✓ ${file.name} загружено);
-            } catch (err) {
-                showToast(Ошибка: ${err});
+        photoZone.style.borderColor = "#3a405e";
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) {
+            if (file.size > 10 * 1024 * 1024) {
+                alert("Файл больше 10 МБ");
+                return;
             }
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                currentImageBase64 = ev.target.result;
+                imagePreviewDiv.innerHTML = <img src="${currentImageBase64}" class="photo-preview" style="max-width:100%; max-height:150px; border-radius:12px;">;
+            };
+            reader.readAsDataURL(file);
+        } else if (file) {
+            alert("Можно загружать только фото");
         }
     });
-    document.getElementById("clearAllBtn").addEventListener("click", clearAll);
-    loadPhotos();
+
+    document.getElementById("submitBtn").onclick = () => {
+        const text = textarea.value;
+        if (!text.trim() && !currentImageBase64) {
+            alert("Напиши текст или добавь фото");
+            return;
+        }
+        addPost(text, currentImageBase64);
+        form.style.display = "none";
+        currentImageBase64 = null;
+        imagePreviewDiv.innerHTML = "";
+        textarea.value = "";
+    };
+
+    loadPosts();
 </script>
 </body>
 </html>
